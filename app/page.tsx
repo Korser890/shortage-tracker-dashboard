@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import type { Flag } from '@/lib/types';
 import { formatDate } from '@/lib/format';
+import { FlagLegend } from '@/components/overview/FlagLegend';
+
 
 
 export default async function HomePage() {
@@ -49,6 +51,8 @@ export default async function HomePage() {
             <FlagTimeline key={c.slug} history={c.flag_history} label={c.name} />
           ))}
         </Card>
+
+        <FlagLegend />
 
         {data.headlines.length > 0 && (
           <HeadlinePanel headlines={data.headlines} />
