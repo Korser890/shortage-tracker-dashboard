@@ -11,7 +11,7 @@ const ITEMS: { flag: Flag; label: string; condition: string }[] = [
   {
     flag: 'RISKY',
     label: 'Risky',
-    condition: 'z-score 1.0–2.0 or price 15–30% above 1y average',
+    condition: 'z-score = 1.0–2.0 or price 15–30% above 1y average',
   },
   {
     flag: 'CRITICAL',
@@ -35,6 +35,9 @@ export function FlagLegend() {
           </div>
         ))}
       </div>
+      <p className="mt-4 border-t border-edge pt-3 text-xs text-muted">
+        Z-score measures how far the current price sits from its 1-year average, relative to historical volatility. A score of 1.0 means one standard deviation above normal; above 2.0 means historically unusual.
+      </p>
     </Card>
   );
 }
