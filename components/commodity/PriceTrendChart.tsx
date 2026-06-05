@@ -74,7 +74,14 @@ export function PriceTrendChart({
             label={{ value: displayUnit, angle: -90, position: 'insideLeft', offset: 12, style: { fontSize: 10, fill: '#94a3b8' } }}
           />
           <Tooltip
-            contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: '#e2e8f0' }}
+             contentStyle={{
+              fontSize: 12,
+              borderRadius: 8,
+              borderColor: '#2E234A',
+              backgroundColor: '#18112E',
+              color: '#EEE9F8',
+            }}
+            labelStyle={{ color: '#7E7299' }}
             labelFormatter={(label) => formatXTick(label as string)}
             formatter={(value) => [`${(value as number).toFixed(2)} ${displayUnit}`, 'Price']}
           />
