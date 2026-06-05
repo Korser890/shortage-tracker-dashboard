@@ -28,10 +28,10 @@ export function FlagLegend() {
       </p>
       <div className="space-y-2.5">
         {ITEMS.map(({ flag, label, condition }) => (
-          <div key={flag} className="flex items-center gap-3">
-            <StatusDot flag={flag} size="md" />
-            <span className="w-16 text-xs font-medium text-content">{label}</span>
-            <span className="text-xs text-muted">{condition}</span>
+          <div key={flag} className="grid grid-cols-[1rem_4rem_1fr] items-start gap-x-3">
+            <div className="mt-0.5"><StatusDot flag={flag} size="md" /></div>
+            <span className="text-xs font-medium text-content">{label}</span>
+            <span className="text-xs leading-relaxed text-muted">{condition}</span>
           </div>
         ))}
       </div>

@@ -38,7 +38,7 @@ export default async function CommodityPage({ params }: PageProps) {
           ← Back to Dashboard
         </Link>
 
-        <header className="flex items-start justify-between gap-4">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium uppercase tracking-widest text-muted">
               Commodity Detail

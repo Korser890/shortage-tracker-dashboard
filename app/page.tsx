@@ -20,7 +20,7 @@ export default async function HomePage() {
     <main className="min-h-screen bg-surface px-6 py-10">
       <div className="mx-auto max-w-5xl space-y-8">
 
-        <header className="flex items-start justify-between gap-4">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium uppercase tracking-widest text-muted">Dashboard</p>
             <h1 className="text-2xl font-bold text-content">Global Resource Shortage Tracker</h1>
