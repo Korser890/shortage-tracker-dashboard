@@ -8,7 +8,7 @@ Next.js dashboard that visualises global energy commodity shortage signals. Disp
 
 ## Prerequisites
 
-The FastAPI backend must be running before starting the frontend. See the [backend repo]([<backend-repo-url>](https://github.com/Korser890/shortage-tracker-dashboard)) for setup instructions.
+The FastAPI backend must be running before starting the frontend. See the [backend repo](https://github.com/Korser890/shortage-tracker-api) for setup instructions.
 
 ## Setup
 
