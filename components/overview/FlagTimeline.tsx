@@ -23,37 +23,42 @@ const FLAGS: Flag[] = ['NORMAL', 'RISKY', 'CRITICAL'];
 
 export function FlagTimeline({ history, label, className }: FlagTimelineProps) {
   const recent = history.slice(-90);
-  const total = recent.length;
+  if (recent.length === 0) return null;
 
-  if (total === 0) return null;
-
-  const counts = recent.reduce<Record<Flag, number>>(
+  const runs = recent.reduce<Array<{ flag: Flag; count: number }>>(
     (acc, entry) => {
       const f = entry.flag as Flag;
-      if (f in acc) acc[f]++;
+      if (acc.length > 0 && acc[acc.length - 1].flag === f) {
+        acc[acc.length - 1].count++;
+      } else {
+        acc.push({ flag: f, count: 1 });
+      }
       return acc;
     },
+    []
+  );
+
+  const counts = runs.reduce<Record<Flag, number>>(
+    (acc, run) => { acc[run.flag] += run.count; return acc; },
     { NORMAL: 0, RISKY: 0, CRITICAL: 0 }
   );
+
 
   return (
     <div className={`flex flex-col gap-2 ${className ?? ''}`}>
       {label && <span className="text-xs font-medium text-muted">{label}</span>}
 
       <div className="flex h-3 w-full overflow-hidden rounded-full">
-        {FLAGS.map((flag) => {
-          const count = counts[flag];
-          if (count === 0) return null;
-          return (
-            <div
-              key={flag}
-              title={`${flag}: ${count}d`}
-              className={FLAG_BG[flag]}
-              style={{ flex: count }}
-            />
-          );
-        })}
+        {runs.map((run, i) => (
+          <div
+            key={i}
+            title={`${run.flag}: ${run.count}d`}
+            className={FLAG_BG[run.flag]}
+            style={{ flex: run.count }}
+          />
+        ))}
       </div>
+
 
       <div className="flex gap-4">
         {FLAGS.map((flag) => {
@@ -70,4 +75,5 @@ export function FlagTimeline({ history, label, className }: FlagTimelineProps) {
     </div>
   );
 }
+
 
