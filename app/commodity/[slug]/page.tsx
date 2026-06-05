@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { fetchCommodity } from '@/lib/api';
+import type { Metadata } from 'next';
 import { ComparisonTable } from '@/components/commodity/ComparisonTable';
 import { InventoryTank } from '@/components/commodity/InventoryTank';
 import { PriceTrendChart } from '@/components/commodity/PriceTrendChart';
@@ -13,6 +14,16 @@ import type { Flag } from '@/lib/types';
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await fetchCommodity(slug);
+  return {
+    title: `${data.meta.name} — Shortage Tracker`,
+    description: `Live shortage signals, price trend, and inventory data for ${data.meta.name}.`,
+  };
+}
+
 
 export default async function CommodityPage({ params }: PageProps) {
   const { slug } = await params;
