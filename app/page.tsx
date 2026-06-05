@@ -9,12 +9,17 @@ import { Badge } from '@/components/ui/Badge';
 import type { Flag } from '@/lib/types';
 import { formatDate } from '@/lib/format';
 import { FlagLegend } from '@/components/overview/FlagLegend';
+import { StaleDataBanner } from '@/components/overview/StaleDataBanner';
+
 
 
 
 export default async function HomePage() {
   const data = await fetchOverview();
-  
+  const daysSince = Math.floor(
+    (Date.now() - new Date(data.meta.last_updated).getTime()) / (1000 * 60 * 60 * 24)
+  );
+  const isStale = daysSince > 3;
 
   return (
     <main className="min-h-screen bg-surface px-6 py-10">
@@ -27,6 +32,8 @@ export default async function HomePage() {
           </div>
           <Badge>Updated {formatDate(data.meta.last_updated)}</Badge>
         </header>
+
+        {isStale && <StaleDataBanner daysSince={daysSince} />}
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {data.commodities.map((c) => (
