@@ -11,9 +11,14 @@ import { formatPrice, formatDate } from '@/lib/format';
 import type { Flag } from '@/lib/types';
 
 
+export const revalidate = 3600;
+
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;

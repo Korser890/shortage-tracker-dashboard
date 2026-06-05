@@ -12,6 +12,7 @@ import { FlagLegend } from '@/components/overview/FlagLegend';
 import { StaleDataBanner } from '@/components/overview/StaleDataBanner';
 
 
+export const revalidate = 3600;
 
 
 export default async function HomePage() {
