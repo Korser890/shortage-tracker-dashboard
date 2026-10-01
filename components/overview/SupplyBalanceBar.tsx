@@ -10,7 +10,8 @@ interface SupplyBalanceBarProps {
   className?: string;
 }
 
-function formatGap(mbpd: number): string {
+function formatGap(tbpd: number): string {
+  const mbpd = tbpd / 1000;
   const sign = mbpd >= 0 ? '+' : '';
   return `${sign}${mbpd.toFixed(1)} Mb/d`;
 }
@@ -35,20 +36,28 @@ export function SupplyBalanceBar({
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted">
-        Supply Balance
-      </span>
-      <div className="relative h-2 rounded-full bg-edge">
-        {zeroPosition !== null && (
+      <div className="flex flex-col gap-0.5">
+        <h2 className="text-sm font-semibold text-content">
+          Supply Balance
+        </h2>
+        <span className="text-[10px] text-muted/70">million barrels per day (Mb/d)</span>
+      </div>
+      <div
+        role="img"
+        aria-label={`Supply balance: ${formatGap(current_gap_tbpd)} (range: ${formatGap(min_gap_tbpd)} to ${formatGap(max_gap_tbpd)})`}
+      >
+        <div className="relative h-2 rounded-full bg-edge">
+          {zeroPosition !== null && (
+            <div
+              className="absolute top-0 h-full w-px -translate-x-1/2 bg-muted/50"
+              style={{ left: `${zeroPosition}%` }}
+            />
+          )}
           <div
-            className="absolute top-0 h-full w-px -translate-x-1/2 bg-muted/50"
-            style={{ left: `${zeroPosition}%` }}
+            className={`absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface shadow ${dotColor}`}
+            style={{ left: `${position}%` }}
           />
-        )}
-        <div
-          className={`absolute top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow ${dotColor}`}
-          style={{ left: `${position}%` }}
-        />
+        </div>
       </div>
       <div className="flex justify-between text-xs">
         <span className="text-muted">{formatGap(min_gap_tbpd)}</span>
@@ -57,7 +66,10 @@ export function SupplyBalanceBar({
         </span>
         <span className="text-muted">{formatGap(max_gap_tbpd)}</span>
       </div>
-      <span className="text-xs text-muted">{formatDate(latest_date)}</span>
+      <p className="text-xs text-muted">
+        {isDeficit ? 'Consumption exceeds production' : 'Production exceeds consumption'}
+        {' '}· {formatDate(latest_date)} · last 12 months
+      </p>
     </Card>
   );
 }

@@ -1,12 +1,11 @@
 import Link from 'next/link';
-import { fetchCommodity } from '@/lib/api';
+import { fetchCommodity, fetchOverview } from '@/lib/api';
 import type { Metadata } from 'next';
 import { ComparisonTable } from '@/components/commodity/ComparisonTable';
 import { InventoryTank } from '@/components/commodity/InventoryTank';
 import { PriceTrendChart } from '@/components/commodity/PriceTrendChart';
 import { ProductionTrendChart } from '@/components/commodity/ProductionTrendChart';
 import { Pill } from '@/components/ui/Pill';
-import { Badge } from '@/components/ui/Badge';
 import { formatPrice, formatDate } from '@/lib/format';
 import type { Flag } from '@/lib/types';
 
@@ -32,29 +31,59 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CommodityPage({ params }: PageProps) {
   const { slug } = await params;
-  const data = await fetchCommodity(slug);
+  const [data, overview] = await Promise.all([
+    fetchCommodity(slug),
+    fetchOverview(),
+  ]);
 
+  const devSign = data.comparison.dev_vs_1y_pct >= 0 ? '+' : '';
+  const flagContext = data.meta.current_flag === 'CRITICAL'
+    ? `At critical supply risk — price is ${devSign}${data.comparison.dev_vs_1y_pct.toFixed(1)}% vs. its 1-year average`
+    : data.meta.current_flag === 'RISKY'
+    ? `At elevated supply risk — price is ${devSign}${data.comparison.dev_vs_1y_pct.toFixed(1)}% vs. its 1-year average`
+    : 'At normal supply levels — price within expected range';
 
   return (
     <main className="min-h-screen bg-surface px-6 py-10">
       <div className="mx-auto max-w-5xl space-y-8">
 
-        <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-content transition-colors">
-          ← Back to Dashboard
+        <Link href="/" aria-label="Back to dashboard" className="inline-flex items-center gap-1.5 py-1 text-xs text-muted hover:text-content transition-colors">
+          <span aria-hidden="true">←</span> Back to Dashboard
         </Link>
+
+        <nav className="flex flex-wrap gap-1" aria-label="All commodities">
+          {overview.commodities.map((c) => (
+            <Link
+              key={c.slug}
+              href={`/commodity/${c.slug}`}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                c.slug === slug
+                  ? 'bg-edge text-content'
+                  : 'text-muted hover:text-content hover:bg-edge/60'
+              }`}
+              aria-current={c.slug === slug ? 'page' : undefined}
+            >
+              {c.name}
+            </Link>
+          ))}
+        </nav>
 
         <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <p className="text-xs font-medium uppercase tracking-widest text-muted">
               Commodity Detail
             </p>
-            <h1 className="text-2xl font-bold text-content">{data.meta.name}</h1>
+            <h1 className="text-2xl font-bold text-content text-balance">{data.meta.name}</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-end gap-1.5">
+            <p className="text-3xl font-bold tracking-tight text-content">
+              {formatPrice(data.meta.latest_price, data.meta.unit)}
+            </p>
             <Pill flag={data.meta.current_flag as Flag} />
-            <Badge>{formatPrice(data.meta.latest_price, data.meta.unit)}</Badge>
           </div>
         </header>
+
+        <p className="text-sm text-muted">{flagContext}</p>
 
         <div className="grid gap-4 lg:grid-cols-2">
           <PriceTrendChart price_trend={data.price_trend} unit={data.meta.unit} />
@@ -68,22 +97,24 @@ export default async function CommodityPage({ params }: PageProps) {
           />
         </div>
 
-        {data.inventory && (
-          <div className="grid gap-4 lg:grid-cols-2">
-            <InventoryTank
-              current_level={data.inventory.current_level}
-              unit={data.inventory.unit}
-              five_year_max={data.inventory.five_year_max}
-              fill_pct={data.inventory.fill_pct}
-              streak_direction={data.inventory.streak_direction}
-              streak_weeks={data.inventory.streak_weeks}
-              latest_date={data.inventory.latest_date}
-            />
-          </div>
+        {data.inventory ? (
+          <InventoryTank
+            current_level={data.inventory.current_level}
+            unit={data.inventory.unit}
+            five_year_max={data.inventory.five_year_max}
+            fill_pct={data.inventory.fill_pct}
+            streak_direction={data.inventory.streak_direction}
+            streak_weeks={data.inventory.streak_weeks}
+            latest_date={data.inventory.latest_date}
+          />
+        ) : (
+          <p className="text-sm text-muted">US inventory tracking is available for crude oil only.</p>
         )}
 
-        {data.production_trend.length > 0 && (
+        {data.production_trend.length > 0 ? (
           <ProductionTrendChart production_trend={data.production_trend} />
+        ) : (
+          <p className="text-sm text-muted">Production trend data is not available for this commodity.</p>
         )}
 
         <p className="text-xs text-muted">

@@ -1,5 +1,5 @@
 import type { Flag } from '@/lib/types';
-import { formatPrice } from '@/lib/format';
+import { formatPrice, formatDevPct } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
 import { Pill } from '@/components/ui/Pill';
 
@@ -13,11 +13,8 @@ interface CommodityCardProps {
 }
 
 function formatDev(pct: number): { text: string; className: string } {
-  const sign = pct >= 0 ? '+' : '';
-  return {
-    text: `${sign}${pct.toFixed(1)}% vs 12-mo avg`,
-    className: pct >= 0 ? 'text-flag-critical' : 'text-flag-normal',
-  };
+  const { text, className } = formatDevPct(pct);
+  return { text: `${text} vs 12-month avg`, className };
 }
 
 export function CommodityCard({
@@ -30,11 +27,13 @@ export function CommodityCard({
 }: CommodityCardProps) {
   const dev = formatDev(price_dev_pct);
   return (
-    <Card className="flex flex-col gap-3">
+    <Card className="group flex flex-col gap-3 transition-colors hover:border-content/40 hover:shadow-md active:opacity-90">
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm font-medium text-muted">{name}</span>
-        <Pill flag={flag} className="shrink-0" />
-
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Pill flag={flag} />
+          <span className="text-[10px] text-muted/40 transition-colors group-hover:text-muted" aria-hidden="true">→</span>
+        </div>
       </div>
       <p className="text-2xl font-bold tracking-tight text-content leading-tight">
         {formatPrice(latest_price, unit)}
@@ -42,7 +41,7 @@ export function CommodityCard({
       <div className="flex flex-col gap-1 text-xs">
         <span className={dev.className}>{dev.text}</span>
         {days_in_flag !== null && (
-          <span className="text-muted">{days_in_flag}d at current flag</span>
+          <span className="text-muted">{days_in_flag} days at current flag</span>
         )}
       </div>
     </Card>

@@ -29,19 +29,25 @@ export function InventoryTank({
 }: InventoryTankProps) {
   const clampedFill = Math.max(0, Math.min(100, fill_pct));
   const tankColor = getTankColor(clampedFill);
-  const streakSymbol = streak_direction === 'up' ? '▲' : '▼';
-  const streakLabel = streak_direction === 'up' ? 'text-flag-normal' : 'text-flag-critical';
+  const safeDirection = streak_direction || null;
+  const streakSymbol = safeDirection === 'up' ? '▲' : safeDirection === 'down' ? '▼' : '—';
+  const streakLabel = safeDirection === 'up'
+    ? 'text-flag-normal'
+    : safeDirection === 'down' && clampedFill < 40
+    ? 'text-flag-critical'
+    : 'text-muted';
+  const streakText = safeDirection === 'up' ? 'Increasing' : safeDirection === 'down' ? 'Decreasing' : 'Stable';
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted">
+      <h2 className="text-xs font-semibold tracking-wide text-muted">
         US Crude Inventory
-      </span>
+      </h2>
 
       <div className="flex items-end gap-4">
         <div className="relative h-32 w-10 overflow-hidden rounded border border-edge bg-surface">
           <div
-            className={`absolute bottom-0 w-full transition-all ${tankColor}`}
+            className={`absolute bottom-0 w-full transition-[height,background-color] duration-300 ${tankColor}`}
             style={{ height: `${clampedFill}%` }}
           />
         </div>
@@ -57,12 +63,17 @@ export function InventoryTank({
             5yr max: {formatLevel(five_year_max)} {unit}
           </span>
           <span className={`text-xs font-medium ${streakLabel}`}>
-            {streakSymbol} {streak_weeks}w streak
+            <span aria-hidden="true">{streakSymbol}</span>
+            <span className="sr-only">{streakText}:</span>
+            {' '}{streak_weeks} week streak
           </span>
         </div>
       </div>
 
       <span className="text-xs text-muted">{formatDate(latest_date)}</span>
+      <p className="border-t border-edge pt-3 text-xs text-muted">
+        Fill level vs. 5-year historical maximum. Below 40% signals tightening supply.
+      </p>
     </Card>
   );
 }

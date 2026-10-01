@@ -1,4 +1,4 @@
-import { formatPrice } from '@/lib/format';
+import { formatPrice, formatDevPct } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
 
 interface ComparisonTableProps {
@@ -12,41 +12,31 @@ interface ComparisonTableProps {
 }
 
 
-function formatDev(pct: number): { text: string; className: string } {
-  const sign = pct >= 0 ? '+' : '';
-  const className =
-    pct >= 5 ? 'text-flag-critical' :
-    pct >= 0 ? 'text-flag-risky' :
-    'text-flag-normal';
-  return { text: `${sign}${pct.toFixed(1)}%`, className };
-}
-
-
 export function ComparisonTable({
   current_price, avg_30d, avg_1y,
   dev_vs_30d_pct, dev_vs_1y_pct,
   unit, className,
 }: ComparisonTableProps) {
-  const d30 = formatDev(dev_vs_30d_pct);
-  const d1y = formatDev(dev_vs_1y_pct);
+  const d30 = formatDevPct(dev_vs_30d_pct);
+  const d1y = formatDevPct(dev_vs_1y_pct);
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted">
+      <h2 className="text-xs font-semibold tracking-wide text-muted">
         Price Comparison
-      </span>
+      </h2>
 
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" aria-label="Price comparison">
         <tbody className="divide-y divide-edge">
           <tr>
-            <td className="py-2 text-muted">Current</td>
+            <th scope="row" className="py-2 text-left font-normal text-muted">Current</th>
             <td className="py-2 text-right font-medium text-content">
               {formatPrice(current_price, unit)}
             </td>
-            <td className="py-2 text-right" />
+            <td className="py-2 pl-3 text-right text-muted" aria-label="no comparison">—</td>
           </tr>
           <tr>
-            <td className="py-2 text-muted">30-day avg</td>
+            <th scope="row" className="py-2 text-left font-normal text-muted">30-day avg</th>
             <td className="py-2 text-right font-medium text-content">
               {formatPrice(avg_30d, unit)}
             </td>
@@ -55,7 +45,7 @@ export function ComparisonTable({
             </td>
           </tr>
           <tr>
-            <td className="py-2 text-muted">1-year avg</td>
+            <th scope="row" className="py-2 text-left font-normal text-muted">12-month avg</th>
             <td className="py-2 text-right font-medium text-content">
               {formatPrice(avg_1y, unit)}
             </td>

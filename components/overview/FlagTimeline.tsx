@@ -21,9 +21,16 @@ const FLAG_TEXT: Record<Flag, string> = {
 const FLAGS: Flag[] = ['NORMAL', 'RISKY', 'CRITICAL'];
 
 
+function formatDateShort(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 export function FlagTimeline({ history, label, className }: FlagTimelineProps) {
   const recent = history.slice(-90);
   if (recent.length === 0) return null;
+
+  const oldestDate = recent[0]?.date;
+  const newestDate = recent[recent.length - 1]?.date;
 
   const runs = recent.reduce<Array<{ flag: Flag; count: number }>>(
     (acc, entry) => {
@@ -53,12 +60,18 @@ export function FlagTimeline({ history, label, className }: FlagTimelineProps) {
           <div
             key={i}
             title={`${run.flag}: ${run.count}d`}
-            className={FLAG_BG[run.flag]}
+            aria-label={`${run.flag}: ${run.count} days`}
+            role="img"
+            className={`cursor-help ${FLAG_BG[run.flag]}`}
             style={{ flex: run.count }}
           />
         ))}
       </div>
 
+      <div className="flex justify-between">
+        {oldestDate && <span className="text-[10px] text-muted/50">{formatDateShort(oldestDate)}</span>}
+        {newestDate && <span className="text-[10px] text-muted/50">{formatDateShort(newestDate)}</span>}
+      </div>
 
       <div className="flex gap-4">
         {FLAGS.map((flag) => {

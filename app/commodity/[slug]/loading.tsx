@@ -2,8 +2,8 @@ import { Card } from '@/components/ui/Card';
 
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-surface px-6 py-10">
-      <div className="mx-auto max-w-5xl space-y-8 animate-pulse">
+    <main className="min-h-screen bg-surface px-6 py-10" aria-busy="true" aria-label="Loading commodity detail">
+      <div className="mx-auto max-w-5xl space-y-8 animate-pulse motion-reduce:animate-none">
 
         <div className="h-3 w-20 rounded bg-edge" />
 

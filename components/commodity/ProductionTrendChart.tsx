@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
+import { chartColors as C } from '@/lib/chart-colors';
 
 interface ProductionTrendChartProps {
   production_trend: Array<{
@@ -28,8 +29,7 @@ function formatXTick(dateStr: string): string {
 }
 
 function formatYTick(value: number): string {
-  if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
-  return `${value.toFixed(0)}`;
+  return `${(value / 1000).toFixed(0)}`;
 }
 
 export function ProductionTrendChart({
@@ -37,69 +37,75 @@ export function ProductionTrendChart({
 }: ProductionTrendChartProps) {
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted">
-        World Production Trend
-      </span>
+      <div className="flex flex-col gap-0.5">
+        <h2 className="text-xs font-semibold tracking-wide text-muted">
+          World Production Trend
+        </h2>
+        <span className="text-[10px] text-muted/70">million barrels per day (Mb/d)</span>
+      </div>
 
-      <ResponsiveContainer width="100%" height={220}>
-        <LineChart
-          data={production_trend}
-          margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
-        >
-          <XAxis
-            dataKey="date"
-            tickFormatter={formatXTick}
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
-            tickLine={false}
-            axisLine={false}
-            interval="preserveStartEnd"
-          />
-          <YAxis
-            tickFormatter={formatYTick}
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
-            tickLine={false}
-            axisLine={false}
-            width={36}
-          />
-          <Tooltip
-            contentStyle={{
-              fontSize: 12,
-              borderRadius: 8,
-              borderColor: '#2E234A',
-              backgroundColor: '#18112E',
-              color: '#EEE9F8',
-            }}
-            labelStyle={{ color: '#7E7299' }}
-            labelFormatter={(label) => formatXTick(label as string)}
-            formatter={(value, name) => [
-              `${(value as number).toFixed(2)} Tb/d`,
-              name === 'volume_tbpd' ? 'Production' : '12m Avg',
-            ]}
-          />
-          <Legend
-            formatter={(value) => value === 'volume_tbpd' ? 'Production' : '12m Avg'}
-            wrapperStyle={{ fontSize: 11 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="volume_tbpd"
-            stroke="#3b82f6"
-            strokeWidth={1.5}
-            dot={false}
-            activeDot={{ r: 3 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="rolling_avg_12m"
-            stroke="#94a3b8"
-            strokeWidth={1.5}
-            strokeDasharray="4 3"
-            dot={false}
-            activeDot={{ r: 3 }}
-            connectNulls={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div role="img" aria-label="World production trend chart with 12-month rolling average">
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart
+            data={production_trend}
+            margin={{ top: 4, right: 8, bottom: 0, left: 0 }}
+          >
+            <XAxis
+              dataKey="date"
+              tickFormatter={formatXTick}
+              tick={{ fontSize: 11, fill: C.muted }}
+              tickLine={false}
+              axisLine={false}
+              interval="preserveStartEnd"
+            />
+            <YAxis
+              tickFormatter={formatYTick}
+              tick={{ fontSize: 11, fill: C.muted }}
+              tickLine={false}
+              axisLine={false}
+              width={40}
+              label={{ value: 'Mb/d', angle: -90, position: 'insideLeft', offset: 12, style: { fontSize: 10, fill: C.muted } }}
+            />
+            <Tooltip
+              contentStyle={{
+                fontSize: 12,
+                borderRadius: 8,
+                borderColor: C.edge,
+                backgroundColor: C.card,
+                color: C.content,
+              }}
+              labelStyle={{ color: C.muted }}
+              labelFormatter={(label) => formatXTick(label as string)}
+              formatter={(value, name) => [
+                `${formatYTick(value as number)} Mb/d`,
+                name === 'volume_tbpd' ? 'Production' : '12m Avg',
+              ]}
+            />
+            <Legend
+              formatter={(value) => value === 'volume_tbpd' ? 'Production' : '12m Avg'}
+              wrapperStyle={{ fontSize: 11, color: C.muted }}
+            />
+            <Line
+              type="monotone"
+              dataKey="volume_tbpd"
+              stroke={C.line}
+              strokeWidth={1.5}
+              dot={false}
+              activeDot={{ r: 3 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="rolling_avg_12m"
+              stroke={C.avg}
+              strokeWidth={1.5}
+              strokeDasharray="4 3"
+              dot={false}
+              activeDot={{ r: 3 }}
+              connectNulls={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </Card>
   );
 }

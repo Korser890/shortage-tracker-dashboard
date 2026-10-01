@@ -10,6 +10,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
+import { chartColors as C } from '@/lib/chart-colors';
 
 interface PriceTrendChartProps {
   price_trend: Array<{
@@ -51,67 +52,68 @@ export function PriceTrendChart({
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted">
+      <h2 className="text-xs font-semibold tracking-wide text-muted">
         Price Trend — 1 Year
-      </span>
+      </h2>
 
-      <ResponsiveContainer width="100%" height={220}>
-        <LineChart data={price_trend} margin={{ top: 4, right: 56, bottom: 0, left: 0 }}>
-          <XAxis
-            dataKey="date"
-            tickFormatter={formatXTick}
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
-            tickLine={false}
-            axisLine={false}
-            interval="preserveStartEnd"
-          />
-          <YAxis
-            tickFormatter={formatYTick}
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
-            tickLine={false}
-            axisLine={false}
-            width={48}
-            label={{ value: displayUnit, angle: -90, position: 'insideLeft', offset: 12, style: { fontSize: 10, fill: '#94a3b8' } }}
-          />
-          <Tooltip
-             contentStyle={{
-              fontSize: 12,
-              borderRadius: 8,
-              borderColor: '#2E234A',
-              backgroundColor: '#18112E',
-              color: '#EEE9F8',
-            }}
-            labelStyle={{ color: '#7E7299' }}
-            labelFormatter={(label) => formatXTick(label as string)}
-            formatter={(value) => [`${(value as number).toFixed(2)} ${displayUnit}`, 'Price']}
-          />
-          {risky !== null && (
-            <ReferenceLine
-              y={risky}
-              stroke="#D97706"
-              strokeDasharray="4 3"
-              label={{ value: 'Risky', position: 'right', fontSize: 10, fill: '#D97706' }}
+      <div role="img" aria-label={`Price trend over the past year (${unit})`}>
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={price_trend} margin={{ top: 4, right: 56, bottom: 0, left: 0 }}>
+            <XAxis
+              dataKey="date"
+              tickFormatter={formatXTick}
+              tick={{ fontSize: 11, fill: C.muted }}
+              tickLine={false}
+              axisLine={false}
+              interval="preserveStartEnd"
             />
-          )}
-          {critical !== null && (
-            <ReferenceLine
-              y={critical}
-              stroke="#DC2626"
-              strokeDasharray="4 3"
-              label={{ value: 'Critical', position: 'right', fontSize: 10, fill: '#DC2626' }}
+            <YAxis
+              tickFormatter={formatYTick}
+              tick={{ fontSize: 11, fill: C.muted }}
+              tickLine={false}
+              axisLine={false}
+              width={48}
+              label={{ value: displayUnit, angle: -90, position: 'insideLeft', offset: 12, style: { fontSize: 10, fill: C.muted } }}
             />
-          )}
-          <Line
-            type="monotone"
-            dataKey="price"
-            stroke="#3b82f6"
-            strokeWidth={1.5}
-            dot={false}
-            activeDot={{ r: 3 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+            <Tooltip
+              contentStyle={{
+                fontSize: 12,
+                borderRadius: 8,
+                borderColor: C.edge,
+                backgroundColor: C.card,
+                color: C.content,
+              }}
+              labelStyle={{ color: C.muted }}
+              labelFormatter={(label) => formatXTick(label as string)}
+              formatter={(value) => [`${(value as number).toFixed(2)} ${displayUnit}`, 'Price']}
+            />
+            {risky !== null && (
+              <ReferenceLine
+                y={risky}
+                stroke={C.risky}
+                strokeDasharray="4 3"
+                label={{ value: 'Risky', position: 'right', fontSize: 10, fill: C.risky }}
+              />
+            )}
+            {critical !== null && (
+              <ReferenceLine
+                y={critical}
+                stroke={C.critical}
+                strokeDasharray="4 3"
+                label={{ value: 'Critical', position: 'right', fontSize: 10, fill: C.critical }}
+              />
+            )}
+            <Line
+              type="monotone"
+              dataKey="price"
+              stroke={C.line}
+              strokeWidth={1.5}
+              dot={false}
+              activeDot={{ r: 3 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </Card>
   );
 }
-

@@ -30,11 +30,21 @@ export function daysAgo(iso: string): string {
 }
 
 const FLAG_COLORS: Record<Flag, string> = {
-  NORMAL: '#16A34A',
-  RISKY:  '#D97706',
-  CRITICAL: '#DC2626',
+  NORMAL:   '#22C55E',
+  RISKY:    '#F59E0B',
+  CRITICAL: '#FF3B5C',
 };
 
 export function getFlagColor(flag: Flag): string {
   return FLAG_COLORS[flag];
+}
+
+export function formatDevPct(pct: number): { text: string; className: string } {
+  const sign = pct >= 0 ? '+' : '';
+  const className =
+    pct >= 30  ? 'text-flag-critical' :
+    pct >= 15  ? 'text-flag-risky' :
+    pct > -15  ? 'text-flag-normal' :
+    'text-muted';
+  return { text: `${sign}${pct.toFixed(1)}%`, className };
 }

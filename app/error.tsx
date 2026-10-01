@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -16,15 +17,23 @@ export default function Error({ error, reset }: ErrorProps) {
   return (
     <main className="min-h-screen bg-surface flex items-center justify-center px-6">
       <div className="text-center space-y-4">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted">Error</p>
-        <h1 className="text-2xl font-bold text-content">Something went wrong</h1>
+        <p className="text-xs font-semibold tracking-wide text-muted">Error</p>
+        <h1 className="text-2xl font-bold text-content text-balance">Something went wrong</h1>
         <p className="text-sm text-muted">Could not load data. The API may be unavailable.</p>
-        <button
-          onClick={reset}
-          className="text-xs text-muted hover:text-content transition-colors underline underline-offset-4"
-        >
-          Try again
-        </button>
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={reset}
+            className="inline-flex items-center rounded-md border border-edge px-4 py-2 text-xs font-medium text-muted hover:text-content hover:border-content/30 transition-colors"
+          >
+            Try again
+          </button>
+          <Link
+            href="/"
+            className="inline-flex items-center rounded-md border border-edge px-4 py-2 text-xs font-medium text-muted hover:text-content hover:border-content/30 transition-colors"
+          >
+            <span aria-hidden="true">←</span>&nbsp;Dashboard
+          </Link>
+        </div>
       </div>
     </main>
   );
