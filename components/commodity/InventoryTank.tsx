@@ -30,7 +30,7 @@ export function InventoryTank({
   const clampedFill = Math.max(0, Math.min(100, fill_pct));
   const tankColor = getTankColor(clampedFill);
   const safeDirection = streak_direction || null;
-  const streakSymbol = safeDirection === 'up' ? '▲' : safeDirection === 'down' ? '▼' : '—';
+  const streakSymbol = safeDirection === 'up' ? '▲' : safeDirection === 'down' ? '▼' : '●';
   const streakLabel = safeDirection === 'up'
     ? 'text-flag-normal'
     : safeDirection === 'down' && clampedFill < 40

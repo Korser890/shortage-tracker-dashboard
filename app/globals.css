@@ -10,7 +10,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Flag colours — tuned for lightness separation, not hue alone */
+  /* Flag colours, tuned for lightness separation as well as hue */
   --color-flag-normal: #3FD68C;
   --color-flag-risky: #F2A63B;
   --color-flag-critical: #FF5C6E;

@@ -33,7 +33,7 @@ export function ComparisonTable({
             <td className="py-2 text-right font-medium text-content">
               {formatPrice(current_price, unit)}
             </td>
-            <td className="py-2 pl-3 text-right text-muted" aria-label="no comparison">—</td>
+            <td className="py-2 pl-3 text-right text-muted" aria-label="no comparison">n/a</td>
           </tr>
           <tr>
             <th scope="row" className="py-2 text-left font-normal text-muted">30-day avg</th>

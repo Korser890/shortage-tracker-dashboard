@@ -53,7 +53,7 @@ export function PriceTrendChart({
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
       <h2 className="text-xs font-semibold tracking-wide text-muted">
-        Price Trend — 1 Year
+        Price Trend, 1 Year
       </h2>
 
       <div role="img" aria-label={`Price trend over the past year (${unit})`}>

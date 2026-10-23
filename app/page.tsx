@@ -51,9 +51,9 @@ export default async function HomePage() {
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-muted">Dashboard</p>
             <h1 className="mt-1 text-2xl font-bold text-content text-balance">Global Resource Shortage Tracker</h1>
-            <p className="mt-2 max-w-sm text-sm text-muted">Live shortage signals for crude oil and natural gas — updated daily from EIA and FRED.</p>
+            <p className="mt-2 max-w-sm text-sm text-muted">Live shortage signals for crude oil and natural gas, updated daily from EIA and FRED.</p>
           </div>
-          <Badge>
+          <Badge className="gap-1">
             Updated <time dateTime={data.meta.last_updated}>{formatDate(data.meta.last_updated)}</time>
           </Badge>
         </header>
@@ -95,7 +95,7 @@ export default async function HomePage() {
         <Card className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-content">
-              Signal History — 90 days
+              Signal History, 90 days
             </h2>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">

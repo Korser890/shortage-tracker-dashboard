@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const data = await fetchCommodity(slug);
   return {
-    title: `${data.meta.name} — Shortage Tracker`,
+    title: `${data.meta.name} | Shortage Tracker`,
     description: `Live shortage signals, price trend, and inventory data for ${data.meta.name}.`,
   };
 }
@@ -38,10 +38,10 @@ export default async function CommodityPage({ params }: PageProps) {
 
   const devSign = data.comparison.dev_vs_1y_pct >= 0 ? '+' : '';
   const flagContext = data.meta.current_flag === 'CRITICAL'
-    ? `At critical supply risk — price is ${devSign}${data.comparison.dev_vs_1y_pct.toFixed(1)}% vs. its 1-year average`
+    ? `At critical supply risk. Price is ${devSign}${data.comparison.dev_vs_1y_pct.toFixed(1)}% vs. its 1-year average`
     : data.meta.current_flag === 'RISKY'
-    ? `At elevated supply risk — price is ${devSign}${data.comparison.dev_vs_1y_pct.toFixed(1)}% vs. its 1-year average`
-    : 'At normal supply levels — price within expected range';
+    ? `At elevated supply risk. Price is ${devSign}${data.comparison.dev_vs_1y_pct.toFixed(1)}% vs. its 1-year average`
+    : 'At normal supply levels. Price is within the expected range.';
 
   return (
     <main className="min-h-screen bg-surface px-6 py-10">

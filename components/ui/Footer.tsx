@@ -11,7 +11,7 @@ export function Footer() {
           <a href="https://newsapi.org" target="_blank" rel="noopener noreferrer" className="hover:text-content transition-colors">NewsAPI</a>
         </p>
         <p className="text-xs text-muted">
-          For analytical purposes only — not financial advice
+          For analytical purposes only. Not financial advice.
         </p>
       </div>
     </footer>
