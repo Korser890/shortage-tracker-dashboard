@@ -30,9 +30,9 @@ export function daysAgo(iso: string): string {
 }
 
 const FLAG_COLORS: Record<Flag, string> = {
-  NORMAL:   '#22C55E',
-  RISKY:    '#F59E0B',
-  CRITICAL: '#FF3B5C',
+  NORMAL:   '#3FD68C',
+  RISKY:    '#F2A63B',
+  CRITICAL: '#FF5C6E',
 };
 
 export function getFlagColor(flag: Flag): string {

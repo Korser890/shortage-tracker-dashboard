@@ -48,3 +48,9 @@ next-env.d.ts
 # dev-only pages
 app/styleguide/
 
+# local tooling
+.claude/
+CLAUDE.md
+AGENTS.md
+
+

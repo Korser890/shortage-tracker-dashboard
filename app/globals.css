@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0C0A18;
-  --foreground: #EEE9F8;
+  --background: #06151A;
+  --foreground: #E2EFEF;
 }
 
 
@@ -10,17 +10,17 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Flag colours — brighter to pop on dark background */
-  --color-flag-normal: #22C55E;
-  --color-flag-risky: #F59E0B;
-  --color-flag-critical: #FF3B5C;
+  /* Flag colours — tuned for lightness separation, not hue alone */
+  --color-flag-normal: #3FD68C;
+  --color-flag-risky: #F2A63B;
+  --color-flag-critical: #FF5C6E;
 
-  /* Dark purple palette */
-  --color-surface: #0C0A18;   /* page / app background */
-  --color-card: #18112E;      /* card surface */
-  --color-content: #EEE9F8;   /* primary text */
-  --color-muted: #7E7299;     /* secondary / muted text */
-  --color-edge: #2E234A;      /* borders, dividers */
+  /* Petrol palette */
+  --color-surface: #06151A;   /* page / app background */
+  --color-card: #0E242B;      /* card surface */
+  --color-content: #E2EFEF;   /* primary text */
+  --color-muted: #6D9199;     /* secondary / muted text */
+  --color-edge: #1A3B44;      /* borders, dividers */
 
   --font-sans: var(--font-inter);
 }

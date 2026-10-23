@@ -1,10 +1,10 @@
 export const chartColors = {
-  line:     '#8B7FD4',
-  avg:      '#5C5378',
-  muted:    '#9088AA',
-  edge:     '#2E234A',
-  card:     '#18112E',
-  content:  '#EEE9F8',
-  risky:    '#F59E0B',
-  critical: '#FF3B5C',
+  line:     '#4FD1C5',
+  avg:      '#2B5A5C',
+  muted:    '#86AFB5',
+  edge:     '#1A3B44',
+  card:     '#0E242B',
+  content:  '#E2EFEF',
+  risky:    '#F2A63B',
+  critical: '#FF5C6E',
 };
