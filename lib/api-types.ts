@@ -161,8 +161,11 @@ export interface components {
             five_year_max: number;
             /** Fill Pct */
             fill_pct: number;
-            /** Streak Direction */
-            streak_direction: string;
+            /**
+             * Streak Direction
+             * @enum {string}
+             */
+            streak_direction: "building" | "declining" | "flat";
             /** Streak Weeks */
             streak_weeks: number;
             /**

@@ -1,16 +1,18 @@
 import { formatDate } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
+import type { StreakDirection } from '@/lib/types';
 
 interface InventoryTankProps {
   current_level: number;
   unit: string;
   five_year_max: number;
   fill_pct: number;
-  streak_direction: string;
+  streak_direction: StreakDirection;
   streak_weeks: number;
   latest_date: string;
   className?: string;
 }
+
 
 function getTankColor(fill_pct: number): string {
   if (fill_pct < 40) return 'bg-flag-critical';
@@ -29,14 +31,18 @@ export function InventoryTank({
 }: InventoryTankProps) {
   const clampedFill = Math.max(0, Math.min(100, fill_pct));
   const tankColor = getTankColor(clampedFill);
-  const safeDirection = streak_direction || null;
-  const streakSymbol = safeDirection === 'up' ? '▲' : safeDirection === 'down' ? '▼' : '●';
-  const streakLabel = safeDirection === 'up'
+
+  const isBuilding  = streak_direction === 'building';
+  const isDeclining = streak_direction === 'declining';
+
+  const streakSymbol = isBuilding ? '▲' : isDeclining ? '▼' : '●';
+  const streakText   = isBuilding ? 'Increasing' : isDeclining ? 'Decreasing' : 'Stable';
+  const streakLabel  = isBuilding
     ? 'text-flag-normal'
-    : safeDirection === 'down' && clampedFill < 40
+    : isDeclining && clampedFill < 40
     ? 'text-flag-critical'
     : 'text-muted';
-  const streakText = safeDirection === 'up' ? 'Increasing' : safeDirection === 'down' ? 'Decreasing' : 'Stable';
+
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
