@@ -44,13 +44,13 @@ next-env.d.ts
 
 *.md
 !README.md
+!CLAUDE.md
+!AGENTS.md
 
 # dev-only pages
 app/styleguide/
 
 # local tooling
 .claude/
-CLAUDE.md
-AGENTS.md
 
 
