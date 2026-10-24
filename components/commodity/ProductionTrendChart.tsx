@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 import { chartColors as C } from '@/lib/chart-colors';
 
 interface ProductionTrendChartProps {
@@ -35,6 +36,8 @@ function formatYTick(value: number): string {
 export function ProductionTrendChart({
   production_trend, className,
 }: ProductionTrendChartProps) {
+  const animate = !useReducedMotion();
+
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
       <div className="flex flex-col gap-0.5">
@@ -92,6 +95,9 @@ export function ProductionTrendChart({
               strokeWidth={1.5}
               dot={false}
               activeDot={{ r: 3 }}
+              isAnimationActive={animate}
+              animationDuration={700}
+              animationBegin={0}
             />
             <Line
               type="monotone"
@@ -101,6 +107,9 @@ export function ProductionTrendChart({
               strokeDasharray="4 3"
               dot={false}
               activeDot={{ r: 3 }}
+              isAnimationActive={animate}
+              animationDuration={700}
+              animationBegin={0}
               connectNulls={false}
             />
           </LineChart>
