@@ -11,6 +11,8 @@ import {
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
 import { chartColors as C } from '@/lib/chart-colors';
+import { RangeToggle, rangeTitle } from '@/components/commodity/RangeToggle';
+import type { PriceRange } from '@/lib/api';
 
 interface PriceTrendChartProps {
   price_trend: Array<{
@@ -20,6 +22,8 @@ interface PriceTrendChartProps {
     critical_threshold: number | null;
   }>;
   unit: string;
+  slug: string;
+  range: PriceRange;
   className?: string;
 }
 
@@ -33,11 +37,17 @@ function getThresholds(data: PriceTrendChartProps['price_trend']) {
   };
 }
 
-function formatXTick(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
+// Day-level ticks are unreadable across 20 years, so the label widens with the range.
+function makeXTickFormatter(range: PriceRange) {
+  if (range === 'max') {
+    return (dateStr: string) => String(new Date(dateStr).getFullYear());
+  }
+  if (range === '5y') {
+    return (dateStr: string) =>
+      new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+  }
+  return (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function formatYTick(value: number): string {
@@ -45,18 +55,23 @@ function formatYTick(value: number): string {
 }
 
 export function PriceTrendChart({
-  price_trend, unit, className,
+  price_trend, unit, slug, range, className,
 }: PriceTrendChartProps) {
   const { risky, critical } = getThresholds(price_trend);
   const displayUnit = unit.replace(/^USD\//, '');
+  const formatXTick = makeXTickFormatter(range);
+  const title = rangeTitle(range);
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
-      <h2 className="text-xs font-semibold tracking-wide text-muted">
-        Price Trend, 1 Year
-      </h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-xs font-semibold tracking-wide text-muted">
+          Price Trend, {title}
+        </h2>
+        <RangeToggle slug={slug} active={range} />
+      </div>
 
-      <div role="img" aria-label={`Price trend over the past year (${unit})`}>
+      <div role="img" aria-label={`Price trend over ${title.toLowerCase()} (${unit})`}>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={price_trend} margin={{ top: 4, right: 56, bottom: 0, left: 0 }}>
             <XAxis

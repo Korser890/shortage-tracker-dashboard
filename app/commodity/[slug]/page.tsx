@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { ComparisonTable } from '@/components/commodity/ComparisonTable';
 import { InventoryTank } from '@/components/commodity/InventoryTank';
 import { PriceTrendChart } from '@/components/commodity/PriceTrendChart';
+import { parsePriceRange } from '@/components/commodity/RangeToggle';
 import { ProductionTrendChart } from '@/components/commodity/ProductionTrendChart';
 import { Pill } from '@/components/ui/Pill';
 import { formatPrice, formatDate } from '@/lib/format';
@@ -15,6 +16,7 @@ export const revalidate = 3600;
 
 interface PageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ range?: string }>;
 }
 
 
@@ -29,10 +31,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 
-export default async function CommodityPage({ params }: PageProps) {
+export default async function CommodityPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const range = parsePriceRange((await searchParams).range);
   const [data, overview] = await Promise.all([
-    fetchCommodity(slug),
+    fetchCommodity(slug, range),
     fetchOverview(),
   ]);
 
@@ -86,7 +89,12 @@ export default async function CommodityPage({ params }: PageProps) {
         <p className="text-sm text-muted">{flagContext}</p>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <PriceTrendChart price_trend={data.price_trend} unit={data.meta.unit} />
+          <PriceTrendChart
+            price_trend={data.price_trend}
+            unit={data.meta.unit}
+            slug={slug}
+            range={range}
+          />
           <ComparisonTable
             current_price={data.comparison.current_price}
             avg_30d={data.comparison.avg_30d}
