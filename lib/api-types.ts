@@ -297,7 +297,9 @@ export interface operations {
     };
     get_commodity_api_commodity__slug__get: {
         parameters: {
-            query?: never;
+            query?: {
+                range?: "90d" | "1y" | "5y" | "max";
+            };
             header?: never;
             path: {
                 slug: string;
