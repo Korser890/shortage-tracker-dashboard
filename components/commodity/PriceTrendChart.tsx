@@ -134,6 +134,9 @@ export function PriceTrendChart({
   const formatXTick = makeXTickFormatter(range);
   const title = rangeTitle(range);
   const description = describeSeries(price_trend, title, displayUnit);
+  // 5Y and Max are bucketed, and each point is the bucket's highest real price.
+  const bucketNote =
+    range === '5y' ? 'weekly high' : range === 'max' ? 'monthly high' : null;
   const animate = !useReducedMotion();
   const events = eventsForChart(slug, price_trend.map((d) => d.date));
 
@@ -265,6 +268,7 @@ export function PriceTrendChart({
           <span className="inline-block w-4 border-t border-dashed" style={{ borderColor: C.critical }} />
           Critical threshold
         </span>
+        {bucketNote && <span className="text-muted/70">Each point is the {bucketNote}</span>}
       </div>
 
       {events.length > 0 && (
