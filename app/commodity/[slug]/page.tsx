@@ -88,13 +88,14 @@ export default async function CommodityPage({ params, searchParams }: PageProps)
 
         <p className="text-sm text-muted">{flagContext}</p>
 
-        <div className="grid gap-4 lg:grid-cols-2">
-          <PriceTrendChart
-            price_trend={data.price_trend}
-            unit={data.meta.unit}
-            slug={slug}
-            range={range}
-          />
+        <PriceTrendChart
+          price_trend={data.price_trend}
+          unit={data.meta.unit}
+          slug={slug}
+          range={range}
+        />
+
+        <div className={`grid gap-4 ${data.inventory ? 'lg:grid-cols-2' : ''}`}>
           <ComparisonTable
             current_price={data.comparison.current_price}
             avg_30d={data.comparison.avg_30d}
@@ -103,19 +104,20 @@ export default async function CommodityPage({ params, searchParams }: PageProps)
             dev_vs_1y_pct={data.comparison.dev_vs_1y_pct}
             unit={data.meta.unit}
           />
+          {data.inventory ? (
+            <InventoryTank
+              current_level={data.inventory.current_level}
+              unit={data.inventory.unit}
+              five_year_max={data.inventory.five_year_max}
+              fill_pct={data.inventory.fill_pct}
+              streak_direction={data.inventory.streak_direction}
+              streak_weeks={data.inventory.streak_weeks}
+              latest_date={data.inventory.latest_date}
+            />
+          ) : null}
         </div>
 
-        {data.inventory ? (
-          <InventoryTank
-            current_level={data.inventory.current_level}
-            unit={data.inventory.unit}
-            five_year_max={data.inventory.five_year_max}
-            fill_pct={data.inventory.fill_pct}
-            streak_direction={data.inventory.streak_direction}
-            streak_weeks={data.inventory.streak_weeks}
-            latest_date={data.inventory.latest_date}
-          />
-        ) : (
+        {!data.inventory && (
           <p className="text-sm text-muted">US inventory tracking is available for crude oil only.</p>
         )}
 

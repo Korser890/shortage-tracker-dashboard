@@ -7,10 +7,13 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  ReferenceLine,
+  ReferenceArea,
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
 import { chartColors as C } from '@/lib/chart-colors';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
+import { eventsForChart } from '@/lib/supply-events';
 import { RangeToggle, rangeTitle } from '@/components/commodity/RangeToggle';
 import type { PriceRange } from '@/lib/api';
 
@@ -101,18 +104,38 @@ function formatTooltipDate(dateStr: string): string {
   return `${day} ${month} ${year}`;
 }
 
-function formatYTick(value: number): string {
-  return value.toFixed(0);
+/** "USD/barrel" -> "$". Derived rather than hardcoded, since the unit string carries the
+ *  currency code and the project is meant to stay currency-agnostic. */
+function currencySymbol(unit: string): string {
+  const code = unit.split('/')[0];
+  try {
+    const part = new Intl.NumberFormat('en-US', { style: 'currency', currency: code })
+      .formatToParts(0)
+      .find((p) => p.type === 'currency');
+    return part ? part.value : '';
+  } catch {
+    return '';
+  }
+}
+
+/** "USD/barrel" -> "USD per barrel". The axis previously read just "barrel", which is a unit
+ *  of volume, not of price. */
+function spellOutUnit(unit: string): string {
+  return unit.replace('/', ' per ');
 }
 
 export function PriceTrendChart({
   price_trend, unit, slug, range, className,
 }: PriceTrendChartProps) {
   const displayUnit = unit.replace(/^USD\//, '');
+  const symbol = currencySymbol(unit);
+  const axisUnit = spellOutUnit(unit);
+  const formatYTick = (value: number) => `${symbol}${value.toFixed(0)}`;
   const formatXTick = makeXTickFormatter(range);
   const title = rangeTitle(range);
   const description = describeSeries(price_trend, title, displayUnit);
   const animate = !useReducedMotion();
+  const events = eventsForChart(slug, price_trend.map((d) => d.date));
 
   return (
     <Card className={`flex flex-col gap-3 ${className ?? ''}`}>
@@ -124,8 +147,8 @@ export function PriceTrendChart({
       </div>
 
       <div role="img" aria-label={description}>
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={price_trend} margin={{ top: 4, right: 56, bottom: 0, left: 0 }}>
+        <ResponsiveContainer width="100%" height={280}>
+          <LineChart data={price_trend} margin={{ top: 22, right: 56, bottom: 0, left: 0 }}>
             <XAxis
               dataKey="date"
               tickFormatter={formatXTick}
@@ -139,8 +162,8 @@ export function PriceTrendChart({
               tick={{ fontSize: 11, fill: C.muted }}
               tickLine={false}
               axisLine={false}
-              width={48}
-              label={{ value: displayUnit, angle: -90, position: 'insideLeft', offset: 12, style: { fontSize: 10, fill: C.muted } }}
+              width={56}
+              label={{ value: axisUnit, angle: -90, position: 'insideLeft', offset: 12, style: { fontSize: 10, fill: C.muted } }}
             />
             <Tooltip
               contentStyle={{
@@ -156,12 +179,38 @@ export function PriceTrendChart({
               itemStyle={{ padding: 0 }}
               wrapperStyle={{ outline: 'none' }}
               // The unit sits in the label so it is not repeated on all three rows.
-              labelFormatter={(label) => `${formatTooltipDate(label as string)} · ${displayUnit}`}
+              labelFormatter={(label) => formatTooltipDate(label as string)}
               formatter={(value, name) => [
-                (value as number).toFixed(2),
+                `${symbol}${(value as number).toFixed(2)}`,
                 SERIES_LABELS[name as string] ?? name,
               ]}
             />
+            {events.map((event) =>
+              event.band ? (
+                <ReferenceArea
+                  key={`${event.id}-band`}
+                  x1={event.band.from}
+                  x2={event.band.to}
+                  fill={C.content}
+                  fillOpacity={0.07}
+                  label={{
+                    value: event.band.caption,
+                    position: 'insideTop',
+                    fontSize: 9,
+                    fill: C.muted,
+                  }}
+                />
+              ) : null,
+            )}
+            {events.map((event) => (
+              <ReferenceLine
+                key={event.id}
+                x={event.eventX}
+                stroke={C.muted}
+                strokeDasharray="2 3"
+                label={{ value: event.label, position: 'top', fontSize: 9, fill: C.muted }}
+              />
+            ))}
             <Line
               type="monotone"
               dataKey="risky_threshold"
@@ -217,6 +266,25 @@ export function PriceTrendChart({
           Critical threshold
         </span>
       </div>
+
+      {events.length > 0 && (
+        <div className="border-t border-edge pt-3">
+          <h3 className="text-[11px] font-semibold tracking-wide text-muted">Events shown</h3>
+          <ul className="mt-2 flex flex-col gap-1.5">
+            {events.map((event) => (
+              <li key={`${event.id}-note`} className="text-[11px] leading-snug text-muted">
+                <span className="text-content">{formatTooltipDate(event.date)}</span>
+                {' · '}
+                {event.title}
+                {event.detail ? `. ${event.detail}.` : '.'}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2.5 text-[11px] leading-snug text-muted/80">
+            Flags are computed from historical data. The tracker has run live since April 2026.
+          </p>
+        </div>
+      )}
     </Card>
   );
 }
