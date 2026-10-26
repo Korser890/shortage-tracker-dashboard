@@ -8,7 +8,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Pill } from '@/components/ui/Pill';
 import type { Flag } from '@/lib/types';
-import { formatDate } from '@/lib/format';
+import { formatDate, daysAgo } from '@/lib/format';
 import { FlagLegend } from '@/components/overview/FlagLegend';
 import { StaleDataBanner } from '@/components/overview/StaleDataBanner';
 
@@ -27,21 +27,24 @@ export default async function HomePage() {
   const riskyCount    = data.commodities.filter(c => c.flag === 'RISKY').length;
   const total         = data.commodities.length;
   const statusFlag: Flag = criticalCount > 0 ? 'CRITICAL' : riskyCount > 0 ? 'RISKY' : 'NORMAL';
+  // "X of Y" agrees with Y, not X, so the plural follows `total` and is always plural at four.
   const statusMessage = criticalCount > 0
-    ? `${criticalCount} of ${total} ${criticalCount === 1 ? 'commodity' : 'commodities'} flagged`
+    ? `${criticalCount} of ${total} commodities flagged`
     : riskyCount > 0
-    ? `${riskyCount} of ${total} ${riskyCount === 1 ? 'commodity' : 'commodities'} elevated`
+    ? `${riskyCount} of ${total} commodities elevated`
     : `All ${total} commodities within expected range`;
   const STATUS_BG: Record<Flag, string> = {
     CRITICAL: 'bg-flag-critical/10 border-flag-critical/25',
     RISKY:    'bg-flag-risky/10 border-flag-risky/25',
     NORMAL:   'bg-flag-normal/10 border-flag-normal/25',
   };
-  const worstCommodity = criticalCount > 0
-    ? (data.commodities.find(c => c.flag === 'CRITICAL') ?? null)
+  // Every commodity in the worst tier, not just the first one in the array. `find()` used to
+  // return whichever happened to be ordered first, which read as if only one was flagged.
+  const flaggedCommodities = criticalCount > 0
+    ? data.commodities.filter(c => c.flag === 'CRITICAL')
     : riskyCount > 0
-    ? (data.commodities.find(c => c.flag === 'RISKY') ?? null)
-    : null;
+    ? data.commodities.filter(c => c.flag === 'RISKY')
+    : [];
 
   return (
     <main className="min-h-screen bg-surface px-6 py-10">
@@ -54,7 +57,10 @@ export default async function HomePage() {
             <p className="mt-2 max-w-sm text-sm text-muted">Live shortage signals for crude oil and natural gas, updated daily from EIA and FRED.</p>
           </div>
           <Badge className="gap-1">
-            Updated <time dateTime={data.meta.last_updated}>{formatDate(data.meta.last_updated)}</time>
+            Latest price
+            <time dateTime={data.meta.last_updated}>{formatDate(data.meta.last_updated)}</time>
+            <span aria-hidden="true">·</span>
+            <span>{daysAgo(data.meta.last_updated)}</span>
           </Badge>
         </header>
 
@@ -69,11 +75,16 @@ export default async function HomePage() {
             <Pill flag={statusFlag} />
             <span className="text-lg font-bold text-content">{statusMessage}</span>
           </div>
-          {worstCommodity && (
-            <p className="mt-2 text-sm text-muted">
-              {worstCommodity.name}:{' '}
-              {worstCommodity.price_dev_pct >= 0 ? '+' : ''}{worstCommodity.price_dev_pct.toFixed(1)}% above 12-month avg
-            </p>
+          {flaggedCommodities.length > 0 && (
+            <ul className="mt-2 space-y-0.5 text-sm text-muted">
+              {flaggedCommodities.map((c) => (
+                <li key={c.slug}>
+                  {c.name}:{' '}
+                  {c.price_dev_pct >= 0 ? '+' : ''}{c.price_dev_pct.toFixed(1)}%{' '}
+                  {c.price_dev_pct >= 0 ? 'above' : 'below'} 12-month avg
+                </li>
+              ))}
+            </ul>
           )}
         </div>
 
