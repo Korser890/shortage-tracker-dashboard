@@ -10,6 +10,7 @@ import {
   Legend,
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
+import { SectionNote } from '@/components/ui/SectionNote';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
 import { chartColors as C } from '@/lib/chart-colors';
 
@@ -45,6 +46,9 @@ export function ProductionTrendChart({
           World Production Trend
         </h2>
         <span className="text-[10px] text-muted/70">million barrels per day (Mb/d)</span>
+        <SectionNote className="mt-1">
+          World oil output each month, with a 12-month average drawn over it. It moves slowly, so it confirms a trend rather than warning of one.
+        </SectionNote>
       </div>
 
       <div role="img" aria-label="World production trend chart with 12-month rolling average">

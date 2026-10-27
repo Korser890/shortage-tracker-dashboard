@@ -11,6 +11,7 @@ import {
   ReferenceArea,
 } from 'recharts';
 import { Card } from '@/components/ui/Card';
+import { SectionNote } from '@/components/ui/SectionNote';
 import { chartColors as C } from '@/lib/chart-colors';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
 import { eventsForChart } from '@/lib/supply-events';
@@ -148,6 +149,9 @@ export function PriceTrendChart({
         </h2>
         <RangeToggle slug={slug} active={range} />
       </div>
+      <SectionNote>
+        The dashed lines are the Risky and Critical limits. They move over time because they are recalculated from this commodity&apos;s own recent history.
+      </SectionNote>
 
       <div role="img" aria-label={description}>
         <ResponsiveContainer width="100%" height={280}>

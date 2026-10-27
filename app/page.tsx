@@ -11,6 +11,7 @@ import type { Flag } from '@/lib/types';
 import { formatDate, daysAgo } from '@/lib/format';
 import { FlagLegend } from '@/components/overview/FlagLegend';
 import { StaleDataBanner } from '@/components/overview/StaleDataBanner';
+import { SectionNote } from '@/components/ui/SectionNote';
 
 
 export const revalidate = 3600;
@@ -54,7 +55,13 @@ export default async function HomePage() {
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-muted">Dashboard</p>
             <h1 className="mt-1 text-2xl font-bold text-content text-balance">Global Resource Shortage Tracker</h1>
-            <p className="mt-2 max-w-sm text-sm text-muted">Live shortage signals for crude oil and natural gas, updated daily from EIA and FRED.</p>
+            <p className="mt-2 max-w-xl text-sm text-muted">Four energy prices, checked every weekday. Each one is compared with its own average over the last 12 months, and anything far outside its normal range gets flagged.</p>
+            <Link
+              href="/how-it-works"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-edge bg-card px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:border-muted hover:text-content"
+            >
+              Full guide, worked example and limits <span aria-hidden="true">→</span>
+            </Link>
           </div>
           <Badge className="gap-1">
             Latest price
@@ -86,21 +93,32 @@ export default async function HomePage() {
               ))}
             </ul>
           )}
+          <SectionNote className="mt-3">
+            Prices come from the EIA, which publishes about a week behind. A date that looks a week old is normal.
+          </SectionNote>
         </div>
 
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {data.commodities.map((c) => (
-            <Link key={c.slug} href={`/commodity/${c.slug}`} className="block" aria-label={`View ${c.name} details`}>
-              <CommodityCard
-                name={c.name}
-                unit={c.unit}
-                latest_price={c.latest_price}
-                price_dev_pct={c.price_dev_pct}
-                flag={c.flag as Flag}
-                days_in_flag={c.days_in_flag}
-              />
-            </Link>
-          ))}
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-sm font-semibold text-content">The four commodities</h2>
+            <SectionNote className="mt-1">
+              Brent and WTI are crude oil. Henry Hub is US natural gas, TTF is European. Each percentage compares a price with its own 12-month average, never with another commodity.
+            </SectionNote>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {data.commodities.map((c) => (
+              <Link key={c.slug} href={`/commodity/${c.slug}`} className="block" aria-label={`View ${c.name} details`}>
+                <CommodityCard
+                  name={c.name}
+                  unit={c.unit}
+                  latest_price={c.latest_price}
+                  price_dev_pct={c.price_dev_pct}
+                  flag={c.flag as Flag}
+                  days_in_flag={c.days_in_flag}
+                />
+              </Link>
+            ))}
+          </div>
         </section>
 
         <Card className="space-y-3">
@@ -123,6 +141,9 @@ export default async function HomePage() {
               </span>
             </div>
           </div>
+          <SectionNote>
+            The last 90 readings for each commodity, split by flag. It shows whether a flag is new or has been running for a long time.
+          </SectionNote>
           {data.commodities.map((c) => (
             <FlagTimeline key={c.slug} history={c.flag_history} label={c.name} />
           ))}

@@ -1,5 +1,6 @@
 import { formatPrice, formatDevPct } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
+import { SectionNote } from '@/components/ui/SectionNote';
 
 interface ComparisonTableProps {
   current_price: number;
@@ -25,6 +26,9 @@ export function ComparisonTable({
       <h2 className="text-xs font-semibold tracking-wide text-muted">
         Price Comparison
       </h2>
+      <SectionNote>
+        Today&apos;s price against its last 30 days and its last 12 months. The two often disagree, and that gap is the point.
+      </SectionNote>
 
       <table className="w-full text-sm" aria-label="Price comparison">
         <tbody className="divide-y divide-edge">

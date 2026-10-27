@@ -1,5 +1,6 @@
 import { formatDate } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
+import { SectionNote } from '@/components/ui/SectionNote';
 
 
 interface SupplyBalanceBarProps {
@@ -41,6 +42,9 @@ export function SupplyBalanceBar({
           Supply Balance
         </h2>
         <span className="text-[10px] text-muted/70">million barrels per day (Mb/d)</span>
+        <SectionNote className="mt-1">
+          World oil production minus consumption. A positive number means the world produced more than it used.
+        </SectionNote>
       </div>
       <div
         role="img"

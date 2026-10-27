@@ -1,6 +1,7 @@
 import { daysAgo } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import { SectionNote } from '@/components/ui/SectionNote';
 
 type HeadlineItem = {
   headline: string;
@@ -25,9 +26,12 @@ function getSentiment(score: number): { prefix: string; label: string; className
 export function HeadlinePanel({ headlines, className }: HeadlinePanelProps) {
   return (
     <Card className={`flex flex-col ${className ?? ''}`}>
-      <h2 className="mb-4 text-sm font-semibold text-content">
+      <h2 className="text-sm font-semibold text-content">
         Latest News
       </h2>
+      <SectionNote className="mt-1 mb-3">
+        The ten most recent energy headlines. Sentiment is scored by software from the wording alone, not by a person.
+      </SectionNote>
       {headlines.length === 0 ? (
         <p className="text-sm text-muted">No recent headlines available.</p>
       ) : (

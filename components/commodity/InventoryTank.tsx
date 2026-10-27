@@ -1,5 +1,6 @@
 import { formatDate } from '@/lib/format';
 import { Card } from '@/components/ui/Card';
+import { SectionNote } from '@/components/ui/SectionNote';
 import type { StreakDirection } from '@/lib/types';
 
 interface InventoryTankProps {
@@ -49,6 +50,9 @@ export function InventoryTank({
       <h2 className="text-xs font-semibold tracking-wide text-muted">
         US Crude Inventory
       </h2>
+      <SectionNote>
+        US crude oil held in storage, against its highest level in five years. Storage is the cushion that absorbs a supply shock.
+      </SectionNote>
 
       <div className="flex items-end gap-4">
         <div className="relative h-32 w-10 overflow-hidden rounded border border-edge bg-surface">
